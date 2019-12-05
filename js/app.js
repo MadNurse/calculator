@@ -1,4 +1,3 @@
-
 const keyTypes = {
   NUMBER: 'number',
   OPERATOR: 'operator',
@@ -9,7 +8,7 @@ const keyTypes = {
 
 const state = {
   numbers: [],
-  result: null,
+  result: 0,
   currentOperator: null,
   lastKeyType: keyTypes.NUMBER,
 }
@@ -22,13 +21,12 @@ let currentKey = {
 const nodeTypes = {
   NUMBER: 'number',
   OPERATOR: 'operator',
-  RESULT: 'result',
 }
 
 const nodes = {
   numbers: [],
   currentOperator: null,
-  result: null,
+  result: 0,
 }
 
 getCurrentKeyType = (keyValue) => {
@@ -101,15 +99,85 @@ getCurrentKeyType = (keyValue) => {
 }
 
 createNode = (node) => {
-  let element;
+  let operations = document.querySelector('.operations');
+  let element = document.createElement('span');
+  element.classList.add(node);
+  operations.appendChild(element);
+  return element;
+}
 
-  if (node === nodeTypes.NUMBER || node === nodeTypes.OPERATOR) {
-    let operations = document.querySelector('.operations');
-    element = document.createElement('span');
-    element.classList.add(node);
-    operations.appendChild(element);
-    return element;
+generateResult = (operator) => {
+  let currentNumber = state.numbers[state.numbers.length - 1];
+
+  if (state.numbers.length > 1) {
+    switch (operator) {
+      case '+':
+        state.result = parseFloat(state.result) + parseFloat(currentNumber);
+        break;
+      case '-':
+        state.result = parseFloat(state.result) - parseFloat(currentNumber);
+        break;
+      case '÷':
+        state.result = parseFloat(state.result) / parseFloat(currentNumber);
+        break;
+      case '×':
+        state.result = parseFloat(state.result) * parseFloat(currentNumber);
+        break;
+      default:
+        state.result = '...';
+        break;
+    }
+  } else {
+    state.result = currentNumber;
   }
+
+  changeResultText();
+}
+
+changeResultText = () => {
+  let resultNode = document.querySelector('.result');
+  resultNode.innerText = state.result;
+  console.log(state.result);
+}
+
+numberKeyPressed = () => {
+  if (!state.numbers.length && !nodes.numbers.length) {
+    state.numbers.push(0);
+    nodes.numbers.push(createNode(nodeTypes.NUMBER));
+  }
+
+  state.lastKeyType = keyTypes.NUMBER;
+  let lenght = state.numbers.length;
+
+  if (state.numbers[lenght - 1] === 0) {
+    if (currentKey.value === 0) {
+      console.log('hata');
+      
+    }
+    state.numbers[lenght - 1] = currentKey.value;
+  } else {
+    state.numbers[lenght - 1] = state.numbers[lenght - 1] + '' + currentKey.value;
+  }
+  
+  nodes.numbers[lenght - 1].innerText = state.numbers[lenght - 1];
+}
+
+operatorKeyPressed = () => {
+  if (state.lastKeyType === keyTypes.NUMBER) {
+    generateResult(state.currentOperator);
+
+    nodes.currentOperator = createNode(nodeTypes.OPERATOR);
+    state.numbers.push(0);
+    nodes.numbers.push(createNode(nodeTypes.NUMBER));
+  }
+
+  state.currentOperator = currentKey.value;
+  nodes.currentOperator.innerText = currentKey.value;
+  state.lastKeyType = keyTypes.OPERATOR;
+}
+
+equalsKeyPressed = () => {
+  state.result = 123;
 }
 
 keyPressed = (key) => {
@@ -117,41 +185,15 @@ keyPressed = (key) => {
   currentKey.type = getCurrentKeyType(currentKey.value);
 
   if (currentKey.type === keyTypes.NUMBER) {
-    if (!state.numbers.length && !nodes.numbers.length) {
-      state.numbers.push(0);
-      nodes.numbers.push(createNode(nodeTypes.NUMBER));
-    }
-
-    state.lastKeyType = keyTypes.NUMBER;
-    let lenght = state.numbers.length;
-
-    if (state.numbers[lenght - 1] === 0) {
-      if (currentKey.value === 0) {
-        console.log('hata');
-        
-      }
-      state.numbers[lenght - 1] = currentKey.value;
-    } else {
-      state.numbers[lenght - 1] = state.numbers[lenght - 1] + '' + currentKey.value;
-    }
-    
-    nodes.numbers[lenght - 1].innerText = state.numbers[lenght - 1];
+    numberKeyPressed();
   }
 
   if (currentKey.type === keyTypes.OPERATOR) {
-    if (state.lastKeyType === keyTypes.NUMBER) {
-      state.currentOperator = currentKey.value;
-      nodes.currentOperator = createNode(nodeTypes.OPERATOR);
-
-      state.numbers.push(0);
-      nodes.numbers.push(createNode(nodeTypes.NUMBER));
-    }
-    nodes.currentOperator.innerText = currentKey.value;
-    state.lastKeyType = keyTypes.OPERATOR;
+    operatorKeyPressed();
   }
 
   if (currentKey.type === keyTypes.EQUALS) {
-    state.result = 123;
+    equalsKeyPressed();
   }
 
   console.log(currentKey);
