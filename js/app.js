@@ -1,7 +1,17 @@
+
+const keyTypes = {
+  NUMBER: 'number',
+  OPERATOR: 'operator',
+  BACKSPACE: 'backspace',
+  ACTION: 'action',
+  EQUALS: 'equals',
+};
+
 const state = {
   numbers: [],
   result: null,
   currentOperator: null,
+  lastKeyType: keyTypes.NUMBER,
 }
 
 let currentKey = {
@@ -20,14 +30,6 @@ const nodes = {
   currentOperator: null,
   result: null,
 }
-
-const keyTypes = {
-  NUMBER: 'number',
-  OPERATOR: 'operator',
-  BACKSPACE: 'backspace',
-  ACTION: 'action',
-  EQUALS: 'equals',
-};
 
 getCurrentKeyType = (keyValue) => {
   let keyType;
@@ -120,7 +122,7 @@ keyPressed = (key) => {
       nodes.numbers.push(createNode(nodeTypes.NUMBER));
     }
 
-    state.currentOperator = null;
+    state.lastKeyType = keyTypes.NUMBER;
     let lenght = state.numbers.length;
 
     if (state.numbers[lenght - 1] === 0) {
@@ -137,20 +139,19 @@ keyPressed = (key) => {
   }
 
   if (currentKey.type === keyTypes.OPERATOR) {
-    if (!state.currentOperator) {
+    if (state.lastKeyType === keyTypes.NUMBER) {
       state.currentOperator = currentKey.value;
       nodes.currentOperator = createNode(nodeTypes.OPERATOR);
-  
+
       state.numbers.push(0);
       nodes.numbers.push(createNode(nodeTypes.NUMBER));
     }
     nodes.currentOperator.innerText = currentKey.value;
+    state.lastKeyType = keyTypes.OPERATOR;
   }
 
   if (currentKey.type === keyTypes.EQUALS) {
-    state = {
-      result: 123,
-    }
+    state.result = 123;
   }
 
   console.log(currentKey);
