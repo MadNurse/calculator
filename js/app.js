@@ -101,7 +101,7 @@ getCurrentKeyType = (keyValue) => {
 createNode = (node) => {
   let element;
 
-  if (node === nodeTypes.NUMBER) {
+  if (node === nodeTypes.NUMBER || node === nodeTypes.OPERATOR) {
     let operations = document.querySelector('.operations');
     element = document.createElement('span');
     element.classList.add(node);
@@ -120,9 +120,14 @@ keyPressed = (key) => {
       nodes.numbers.push(createNode(nodeTypes.NUMBER));
     }
 
+    state.currentOperator = null;
     let lenght = state.numbers.length;
 
     if (state.numbers[lenght - 1] === 0) {
+      if (currentKey.value === 0) {
+        console.log('hata');
+        
+      }
       state.numbers[lenght - 1] = currentKey.value;
     } else {
       state.numbers[lenght - 1] = state.numbers[lenght - 1] + '' + currentKey.value;
@@ -132,9 +137,14 @@ keyPressed = (key) => {
   }
 
   if (currentKey.type === keyTypes.OPERATOR) {
-    state.currentOperator = currentKey.value;
-    state.numbers.push(0);
-    nodes.numbers.push(createNode(nodeTypes.NUMBER));
+    if (!state.currentOperator) {
+      state.currentOperator = currentKey.value;
+      nodes.currentOperator = createNode(nodeTypes.OPERATOR);
+  
+      state.numbers.push(0);
+      nodes.numbers.push(createNode(nodeTypes.NUMBER));
+    }
+    nodes.currentOperator.innerText = currentKey.value;
   }
 
   if (currentKey.type === keyTypes.EQUALS) {
