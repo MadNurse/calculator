@@ -135,9 +135,18 @@ generateResult = (operator) => {
 }
 
 changeResultText = () => {
+  const { result } = state;
+  let resultText = result.toString();
   let resultNode = document.querySelector('.result');
-  resultNode.innerText = state.result;
-  console.log(state.result);
+
+  if (result.toString().length > 9) {
+    let resultExponent = result.toString().substring(0, 9);
+    let exponentLength = result.toString().length - resultExponent.length;
+    resultText = resultExponent + "e+" + exponentLength;
+  }
+
+  resultNode.innerText = resultText;
+  console.log(resultText);
 }
 
 numberKeyPressed = () => {
@@ -147,19 +156,18 @@ numberKeyPressed = () => {
   }
 
   state.lastKeyType = keyTypes.NUMBER;
-  let lenght = state.numbers.length;
+  let currentIndex = state.numbers.length - 1;
 
-  if (state.numbers[lenght - 1] === 0) {
+  if (state.numbers[currentIndex] === 0) {
     if (currentKey.value === 0) {
       console.log('hata');
-      
     }
-    state.numbers[lenght - 1] = currentKey.value;
+    state.numbers[currentIndex] = currentKey.value;
   } else {
-    state.numbers[lenght - 1] = state.numbers[lenght - 1] + '' + currentKey.value;
+    state.numbers[currentIndex] = state.numbers[currentIndex] + '' + currentKey.value;
   }
   
-  nodes.numbers[lenght - 1].innerText = state.numbers[lenght - 1];
+  nodes.numbers[currentIndex].innerText = state.numbers[currentIndex];
 }
 
 operatorKeyPressed = () => {
@@ -180,6 +188,35 @@ equalsKeyPressed = () => {
   state.result = 123;
 }
 
+backspaceKeyPressed = () => {
+  if (state.lastKeyType === keyTypes.OPERATOR) {
+    return;
+  }
+
+  let currentIndex = state.numbers.length - 1;
+  
+  let lastNumber = state.numbers[currentIndex];
+
+  let resultWithoutLastChar;
+
+  console.log(lastNumber.toString().length);
+  
+  if (lastNumber.toString().length == 1) {
+    resultWithoutLastChar = '0';
+  } else {
+    resultWithoutLastChar = lastNumber.toString().substring(0, lastNumber.toString().length - 1);
+  }
+
+  state.numbers[currentIndex] = parseFloat(resultWithoutLastChar);
+  nodes.numbers[currentIndex].innerText = resultWithoutLastChar;
+
+  console.log(`backspace pressed ${lastNumber} => ${resultWithoutLastChar}`);
+}
+
+clearKeyPressed = () => {
+  
+}
+
 keyPressed = (key) => {
   currentKey.value = key.target.innerText
   currentKey.type = getCurrentKeyType(currentKey.value);
@@ -194,6 +231,19 @@ keyPressed = (key) => {
 
   if (currentKey.type === keyTypes.EQUALS) {
     equalsKeyPressed();
+  }
+
+  if (currentKey.type === keyTypes.ACTION) {
+    switch (currentKey.value) {
+      case 'AC':
+        clearKeyPressed();
+        break;
+      case '⌫':
+        backspaceKeyPressed();
+        break;
+      default:
+        break;
+    }
   }
 
   console.log(currentKey);
