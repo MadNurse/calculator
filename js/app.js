@@ -10,7 +10,7 @@ const state = {
   numbers: [],
   result: 0,
   currentOperator: null,
-  lastKeyType: keyTypes.NUMBER,
+  previousKeyType: keyTypes.NUMBER,
 }
 
 let currentKey = {
@@ -86,7 +86,7 @@ getCurrentKeyType = (keyValue) => {
     case '=':
       keyType = keyTypes.EQUALS;
       break;
-    case 'AC':
+    case 'C':
       keyType = keyTypes.ACTION;
       break;
     case '⌫':
@@ -155,7 +155,6 @@ numberKeyPressed = () => {
     nodes.numbers.push(createNode(nodeTypes.NUMBER));
   }
 
-  state.lastKeyType = keyTypes.NUMBER;
   let currentIndex = state.numbers.length - 1;
 
   if (state.numbers[currentIndex] === 0) {
@@ -170,7 +169,7 @@ numberKeyPressed = () => {
 }
 
 operatorKeyPressed = () => {
-  if (state.lastKeyType === keyTypes.NUMBER) {
+  if (state.previousKeyType !== keyTypes.OPERATOR) {
     generateResult(state.currentOperator);
 
     nodes.currentOperator = createNode(nodeTypes.OPERATOR);
@@ -180,15 +179,35 @@ operatorKeyPressed = () => {
 
   state.currentOperator = currentKey.value;
   nodes.currentOperator.innerText = currentKey.value;
-  state.lastKeyType = keyTypes.OPERATOR;
 }
 
 equalsKeyPressed = () => {
-  state.result = 123;
+  let currentIndex = state.numbers.length - 1;
+  generateResult(state.currentOperator);
+
+  setDefault();
+
+  let operationsNode = document.querySelector('.operations');
+  operationsNode.innerHTML = '';
+  
+  console.log(state.result, state.numbers[currentIndex], state.currentOperator);
+}
+
+actionKeyPressed = () => {
+  switch (currentKey.value) {
+    case 'C':
+      clearKeyPressed();
+      break;
+    case '⌫':
+      backspaceKeyPressed();
+      break;
+    default:
+      break;
+  }
 }
 
 backspaceKeyPressed = () => {
-  if (state.lastKeyType === keyTypes.OPERATOR) {
+  if (state.previousKeyType === keyTypes.OPERATOR) {
     return;
   }
 
@@ -212,8 +231,28 @@ backspaceKeyPressed = () => {
   console.log(`backspace pressed ${lastNumber} => ${resultWithoutLastChar}`);
 }
 
+setDefault = () => {
+  state.numbers = [];
+  state.result = 0;
+  state.currentOperator = null;
+  state.previousKeyType = keyTypes.NUMBER;
+
+  currentKey.type = null;
+  currentKey.value = null;
+
+  nodes.numbers = [];
+  nodes.currentOperator = null;
+  nodes.result = 0;
+}
+
 clearKeyPressed = () => {
-  
+  setDefault();
+
+  let resultNode = document.querySelector('.result');
+  resultNode.innerText = '0';
+
+  let operationsNode = document.querySelector('.operations');
+  operationsNode.innerHTML = '';
 }
 
 keyPressed = (key) => {
@@ -222,29 +261,15 @@ keyPressed = (key) => {
 
   if (currentKey.type === keyTypes.NUMBER) {
     numberKeyPressed();
-  }
-
-  if (currentKey.type === keyTypes.OPERATOR) {
+  } else if (currentKey.type === keyTypes.OPERATOR) {
     operatorKeyPressed();
-  }
-
-  if (currentKey.type === keyTypes.EQUALS) {
+  } else if (currentKey.type === keyTypes.EQUALS) {
     equalsKeyPressed();
+  } else if (currentKey.type === keyTypes.ACTION) {
+    actionKeyPressed();
   }
 
-  if (currentKey.type === keyTypes.ACTION) {
-    switch (currentKey.value) {
-      case 'AC':
-        clearKeyPressed();
-        break;
-      case '⌫':
-        backspaceKeyPressed();
-        break;
-      default:
-        break;
-    }
-  }
-
+  state.previousKeyType = getCurrentKeyType(currentKey.value);
   console.log(currentKey);
 }
 
