@@ -56,6 +56,7 @@ body, html {
 
 .operations span {
   margin-left: 8px;
+  font-size: 1.3rem;
 }
 
 .operations span.number{
@@ -66,7 +67,7 @@ body, html {
   color: #3effa3;
 }
 
-.body {
+.wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -74,7 +75,7 @@ body, html {
   padding: 8px;
 }
 
-.body .row {
+.wrapper .row {
   display: flex;
   flex: 1;
 }
@@ -86,6 +87,7 @@ body, html {
   align-items: center;
   color: #8e8e8f;
   box-sizing: border-box;
+  font-size: 1.4rem;
 }
 
 .row .key.operator{

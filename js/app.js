@@ -33,65 +33,30 @@ getCurrentKeyType = (keyValue) => {
   let keyType;
   switch (keyValue) {
     case '1':
-      keyType = keyTypes.NUMBER;
-      break;
     case '2':
-      keyType = keyTypes.NUMBER;
-      break;
     case '3':
-      keyType = keyTypes.NUMBER;
-      break;
     case '4':
-      keyType = keyTypes.NUMBER;
-      break;
     case '5':
-      keyType = keyTypes.NUMBER;
-      break;
     case '6':
-      keyType = keyTypes.NUMBER;
-      break;
     case '7':
-      keyType = keyTypes.NUMBER;
-      break;
     case '8':
-      keyType = keyTypes.NUMBER;
-      break;
     case '9':
-      keyType = keyTypes.NUMBER;
-      break;
     case '0':
-      keyType = keyTypes.NUMBER;
-      break;
     case '.':
       keyType = keyTypes.NUMBER;
       break;
     case '÷':
-      keyType = keyTypes.OPERATOR;
-      break;
     case '×':
-      keyType = keyTypes.OPERATOR;
-      break;
     case '+':
-      keyType = keyTypes.OPERATOR;
-      break;
     case '-':
-      keyType = keyTypes.OPERATOR;
-      break;
     case '%':
-      keyType = keyTypes.OPERATOR;
-      break;
-    case '⁺/-':
       keyType = keyTypes.OPERATOR;
       break;
     case '=':
       keyType = keyTypes.EQUALS;
       break;
     case 'CE':
-      keyType = keyTypes.ACTION;
-      break;
     case 'C':
-      keyType = keyTypes.ACTION;
-      break;
     case '⌫':
       keyType = keyTypes.ACTION;
       break;
@@ -130,7 +95,6 @@ generateResult = (operator) => {
         state.result = (parseFloat(state.result) / 100) * parseFloat(currentNumber);
         break;
       default:
-        state.result = '...';
         break;
     }
   } else {
@@ -142,7 +106,16 @@ generateResult = (operator) => {
 
 changeResultText = () => {
   const { result } = state;
+
   let resultNode = document.querySelector('.result');
+  let resultLength = result.toString().length;
+  if (resultLength > 10 && resultLength <= 15) {
+    resultNode.style.fontSize = '2rem';
+  } else if (resultLength >= 15) {
+    resultNode.style.fontSize = '1.5rem';
+  } else {
+    resultNode.style.fontSize = '3rem';
+  }
   resultNode.innerText = result.toString();
 }
 
@@ -256,9 +229,7 @@ clearKeyPressed = () => {
 }
 
 clearEntryKeyPressed = () => {
-  
   let currentIndex = state.numbers.length - 1;
-
   let numberNodes = document.querySelectorAll('.operations span.number');
 
   if (numberNodes.length < 1) {
@@ -266,8 +237,6 @@ clearEntryKeyPressed = () => {
   }
 
   state.numbers[currentIndex] = 0;
-  console.log(numberNodes[currentIndex]);
-  
   numberNodes[currentIndex].innerHTML = '';
 }
 
@@ -293,4 +262,3 @@ let keys = document.querySelectorAll('.key');
 keys.forEach(element => {
   element.addEventListener('click', keyPressed);
 });
-
