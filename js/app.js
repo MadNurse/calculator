@@ -154,7 +154,7 @@ numberKeyPressed = () => {
 
   let currentIndex = state.numbers.length - 1;
 
-  if (state.numbers[currentIndex] === 0) {
+  if (state.numbers[currentIndex] === 0 && currentKey.value !== '.') {
     if (currentKey.value !== '0') {
       state.numbers[currentIndex] = currentKey.value;
     }
