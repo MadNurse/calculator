@@ -75,7 +75,8 @@ createNode = (node) => {
 }
 
 generateResult = (operator) => {
-  let currentNumber = state.numbers[state.numbers.length - 1];
+  let currentIndex = state.numbers.length - 1;
+  let currentNumber = state.numbers[currentIndex];
 
   if (state.numbers.length > 1) {
     switch (operator) {
@@ -241,8 +242,9 @@ clearEntryKeyPressed = () => {
 }
 
 keyPressed = (key) => {
-  currentKey.value = key.target.innerText
-  currentKey.type = getCurrentKeyType(currentKey.value);
+  const pressedKey = key.target.dataset.key;
+  currentKey.value = pressedKey;
+  currentKey.type = getCurrentKeyType(pressedKey);
 
   if (currentKey.type === keyTypes.NUMBER) {
     numberKeyPressed();
@@ -258,7 +260,5 @@ keyPressed = (key) => {
   console.log(currentKey);
 }
 
-let keys = document.querySelectorAll('.key');
-keys.forEach(element => {
-  element.addEventListener('click', keyPressed);
-});
+let wrapper = document.querySelector('.wrapper');
+wrapper.addEventListener('click', keyPressed);
