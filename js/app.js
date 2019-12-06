@@ -86,6 +86,9 @@ getCurrentKeyType = (keyValue) => {
     case '=':
       keyType = keyTypes.EQUALS;
       break;
+    case 'CE':
+      keyType = keyTypes.ACTION;
+      break;
     case 'C':
       keyType = keyTypes.ACTION;
       break;
@@ -123,6 +126,9 @@ generateResult = (operator) => {
       case '×':
         state.result = parseFloat(state.result) * parseFloat(currentNumber);
         break;
+      case '%':
+        state.result = (parseFloat(state.result) / 100) * parseFloat(currentNumber);
+        break;
       default:
         state.result = '...';
         break;
@@ -136,17 +142,8 @@ generateResult = (operator) => {
 
 changeResultText = () => {
   const { result } = state;
-  let resultText = result.toString();
   let resultNode = document.querySelector('.result');
-
-  if (result.toString().length > 9) {
-    let resultExponent = result.toString().substring(0, 9);
-    let exponentLength = result.toString().length - resultExponent.length;
-    resultText = resultExponent + "e+" + exponentLength;
-  }
-
-  resultNode.innerText = resultText;
-  console.log(resultText);
+  resultNode.innerText = result.toString();
 }
 
 numberKeyPressed = () => {
@@ -189,12 +186,15 @@ equalsKeyPressed = () => {
 
   let operationsNode = document.querySelector('.operations');
   operationsNode.innerHTML = '';
-  
+
   console.log(state.result, state.numbers[currentIndex], state.currentOperator);
 }
 
 actionKeyPressed = () => {
   switch (currentKey.value) {
+    case 'CE':
+      clearEntryKeyPressed();
+      break;
     case 'C':
       clearKeyPressed();
       break;
@@ -253,6 +253,22 @@ clearKeyPressed = () => {
 
   let operationsNode = document.querySelector('.operations');
   operationsNode.innerHTML = '';
+}
+
+clearEntryKeyPressed = () => {
+  
+  let currentIndex = state.numbers.length - 1;
+
+  let numberNodes = document.querySelectorAll('.operations span.number');
+
+  if (numberNodes.length < 1) {
+    return;
+  }
+
+  state.numbers[currentIndex] = 0;
+  console.log(numberNodes[currentIndex]);
+  
+  numberNodes[currentIndex].innerHTML = '';
 }
 
 keyPressed = (key) => {
