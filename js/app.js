@@ -159,10 +159,9 @@ numberKeyPressed = () => {
   let currentIndex = state.numbers.length - 1;
 
   if (state.numbers[currentIndex] === 0) {
-    if (currentKey.value === 0) {
-      console.log('hata');
+    if (currentKey.value !== '0') {
+      state.numbers[currentIndex] = currentKey.value;
     }
-    state.numbers[currentIndex] = currentKey.value;
   } else {
     state.numbers[currentIndex] = state.numbers[currentIndex] + '' + currentKey.value;
   }
@@ -194,13 +193,13 @@ backspaceKeyPressed = () => {
   }
 
   let currentIndex = state.numbers.length - 1;
-  
   let lastNumber = state.numbers[currentIndex];
-
   let resultWithoutLastChar;
 
-  console.log(lastNumber.toString().length);
-  
+  if (!lastNumber) {
+    return;
+  }
+
   if (lastNumber.toString().length == 1) {
     resultWithoutLastChar = '0';
   } else {
